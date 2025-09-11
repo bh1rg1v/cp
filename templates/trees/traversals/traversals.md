@@ -1,4 +1,6 @@
-# Tree Traversal Algorithms - Depth-First Search (DFS) Traversals
+# Tree Traversal Algorithms
+
+## DFS (Depth-First Search) Traversals
 
 ### 1. Pre-order Traversal
 **Order**: Root → Left → Right
@@ -69,7 +71,52 @@ def postOrder(root):
 
 ---
 
-### 4. Morris In-order Traversal
+## BFS (Breadth-First Search) Traversal
+
+### Level-order Traversal
+**Order**: Level by level from left to right
+
+```python
+from collections import deque
+
+def levelOrder(root):
+    res = []
+    if root is None:
+        return []
+    
+    queue = deque()
+    queue.append(root)
+
+    while queue:
+        node = queue.popleft()
+        res.append(node.val)
+
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+
+    return res
+```
+
+**Explanation**:
+- Use a queue to process nodes level by level
+- Start with root in queue
+- For each node: visit it, then add its children to queue
+- Continue until queue is empty
+
+**Use Cases**:
+- Finding shortest path in unweighted trees
+- Level-wise processing of tree nodes
+- Finding nodes at a specific level
+- Tree serialization by levels
+
+**Time Complexity**: O(n)  
+**Space Complexity**: O(w) where w is the maximum width of the tree
+
+---
+
+## Morris In-order Traversal
 **Order**: Left → Root → Right (Space Optimized)
 
 ```python
@@ -124,9 +171,10 @@ Morris traversal uses threading to achieve in-order traversal without recursion 
 | Pre-order | O(n) | O(h) | Yes | Tree copying, serialization |
 | In-order | O(n) | O(h) | Yes | BST sorted order |
 | Post-order | O(n) | O(h) | Yes | Tree deletion, directory size |
+| Level-order (BFS) | O(n) | O(w) | No | Level-wise processing, shortest path |
 | Morris In-order | O(n) | O(1) | No | Memory-efficient in-order |
 
-**Note**: h = height of tree, n = number of nodes
+**Note**: h = height of tree, n = number of nodes, w = maximum width of tree
 
 ## References
 
