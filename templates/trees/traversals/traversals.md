@@ -1,8 +1,4 @@
-# Tree Traversal Algorithms
-
-This document explains the different tree traversal algorithms implemented in the traversals directory.
-
-## Depth-First Search (DFS) Traversals
+# Tree Traversal Algorithms - Depth-First Search (DFS) Traversals
 
 ### 1. Pre-order Traversal
 **Order**: Root → Left → Right
@@ -131,3 +127,7 @@ Morris traversal uses threading to achieve in-order traversal without recursion 
 | Morris In-order | O(n) | O(1) | No | Memory-efficient in-order |
 
 **Note**: h = height of tree, n = number of nodes
+
+## References
+
+- [Inorder Tree Traversal without Recursion and without Stack - GeeksforGeeks](https://www.geeksforgeeks.org/dsa/inorder-tree-traversal-without-recursion-and-without-stack/)
