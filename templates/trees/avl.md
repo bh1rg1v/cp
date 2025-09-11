@@ -195,16 +195,48 @@ def minValueNode(node):
 
 ## Advantages
 
-- **Guaranteed Balance**: Height is always O(log n)
-- **Predictable Performance**: All operations in O(log n)
-- **Self-Balancing**: Automatically maintains balance
+- **Guaranteed Balance**: Height is always O(log n), never degrades to linear
+- **Predictable Performance**: All operations consistently in O(log n) time
+- **Self-Balancing**: Automatically maintains balance without manual intervention
+- **Optimal Search**: Faster lookups compared to Red-Black trees due to stricter balancing
+- **Cache Efficiency**: Better cache performance due to balanced structure
+- **Deterministic**: No randomization, behavior is completely predictable
+- **Memory Efficient**: Only stores height information, minimal overhead
+- **Thread-Safe Reads**: Multiple concurrent reads are naturally safe
+
+## Disadvantages
+
+- **Insertion/Deletion Overhead**: More rotations needed compared to Red-Black trees
+- **Rigid Balancing**: Stricter balance requirements can cause more restructuring
+- **Memory Usage**: Extra height field in each node increases memory consumption
+- **Complex Implementation**: More complex to implement than basic BST
+- **Frequent Rebalancing**: Heavy insertion/deletion workloads trigger many rotations
+- **Not Optimal for Write-Heavy**: Red-Black trees perform better for frequent modifications
 
 ## Use Cases
 
-- Database indexing
-- Memory management systems
-- Applications requiring guaranteed O(log n) operations
-- Real-time systems where worst-case performance matters
+### Database Systems
+- **B+ Tree Alternatives**: When simpler structure is preferred
+- **Index Structures**: For tables with more reads than writes
+- **Range Queries**: Efficient in-order traversal for range searches
+
+### Real-Time Systems
+- **Embedded Systems**: Predictable O(log n) performance critical
+- **Game Engines**: Spatial indexing, collision detection
+- **Operating Systems**: Process scheduling, memory management
+
+### Data Analytics
+- **Statistical Applications**: Maintaining sorted datasets
+- **Time Series Data**: Efficient timestamp-based lookups
+- **Financial Systems**: Order book management, price indexing
+
+### Specialized Applications
+- **Compiler Design**: Symbol table management
+- **Network Routing**: IP address lookup tables
+- **Geographic Information Systems**: Spatial data indexing
+- **Caching Systems**: LRU cache implementations with guaranteed performance
+- **Priority Queues**: When balanced performance is required
+- **Auto-complete Systems**: Prefix-based search in dictionaries
 
 ## AVL vs Other Trees
 
@@ -214,4 +246,20 @@ def minValueNode(node):
 | Red-Black | O(log n) | O(log n) | O(log n) | Relaxed |
 | BST | O(n) | O(n) | O(n) | None |
 
-AVL trees are more rigidly balanced than Red-Black trees, making them faster for lookup-intensive applications.
+**When to Choose AVL:**
+- Read-heavy applications (70%+ reads)
+- Need guaranteed O(log n) performance
+- Memory is not extremely constrained
+- Predictable performance is critical
+
+**When to Choose Red-Black:**
+- Write-heavy applications
+- Need faster insertions/deletions
+- Memory usage is critical
+- Can tolerate slightly slower searches
+
+## References
+
+- [Introduction to AVL Tree - GeeksforGeeks](https://www.geeksforgeeks.org/dsa/introduction-to-avl-tree/)
+- [Insertion in an AVL Tree - GeeksforGeeks](https://www.geeksforgeeks.org/dsa/insertion-in-an-avl-tree/)
+- [Deletion in an AVL Tree - GeeksforGeeks](https://www.geeksforgeeks.org/dsa/deletion-in-an-avl-tree/)
