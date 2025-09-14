@@ -22,22 +22,22 @@ Fenwick Tree uses the **Least Significant Bit (LSB)** trick:
 ```python
 def __init__(self, nums):
     self.n = len(nums)
-    self.FT = [0] * (self.n + 1)  # 1-indexed
-    for i in range(self.n):
-        self.update(i + 1, nums[i])
+    self.bit = [0] * (self.n + 1)  # 1-indexed
+    for idx, val in enumerate(nums, 1):
+        self.update(idx, val)
 ```
 
 **Process:**
 1. Create 1-indexed array of size n+1
 2. Initialize all values to 0
-3. Build tree by updating each element
+3. Build tree by updating each element using enumerate
 
 ### Update Operation
 ```python
-def update(self, i, val):  # Add val to index i (1-indexed)
-    while i <= self.n:
-        self.FT[i] += val
-        i += i & (-i)  # Move to next index
+def update(self, idx, val):  # Add val to index idx (1-indexed)
+    while idx <= self.n:
+        self.bit[idx] += val
+        idx += idx & (-idx)  # Move to next index
 ```
 
 **Process:**
@@ -49,14 +49,20 @@ def update(self, i, val):  # Add val to index i (1-indexed)
 - 3 (011₂) → 4 (100₂) → 8 (1000₂)
 - Updates indices: 3, 4, 8
 
-### Query Operation
+### Prefix Query Operation
 ```python
-def getSum(self, i):  # Get prefix sum up to index i (1-indexed)
+def prefixQuery(self, idx):  # Get prefix sum up to index idx (1-indexed)
     res = 0
-    while i > 0:
-        res += self.FT[i]
-        i -= i & (-i)  # Move to parent
+    while idx > 0:
+        res += self.bit[idx]
+        idx -= idx & (-idx)  # Move to parent
     return res
+```
+
+### Range Query Operation
+```python
+def rangeQuery(self, l, r):  # Sum of [l..r] (1-indexed)
+    return self.prefixQuery(r) - self.prefixQuery(l - 1)
 ```
 
 **Process:**
@@ -74,41 +80,86 @@ def getSum(self, i):  # Get prefix sum up to index i (1-indexed)
 ### Basic Operations
 ```python
 # Initialize with array [1, 2, 3, 4, 5]
-ft = FT([1, 2, 3, 4, 5])
+bit = BIT([1, 2, 3, 4, 5])
 
-# Add 10 to index 3 (0-indexed becomes 1-indexed)
-ft.update(3, 10)  # Now array is [1, 2, 13, 4, 5]
+# Add 10 to index 3 (1-indexed)
+bit.update(3, 10)  # Now array is [1, 2, 13, 4, 5]
 
 # Get prefix sum up to index 3
-print(ft.getSum(3))  # Sum of [1, 2, 13] = 16
+print(bit.prefixQuery(3))  # Sum of [1, 2, 13] = 16
 
 # Get prefix sum up to index 5
-print(ft.getSum(5))  # Sum of [1, 2, 13, 4, 5] = 25
+print(bit.prefixQuery(5))  # Sum of [1, 2, 13, 4, 5] = 25
 ```
 
 ### Range Sum Query
 ```python
-def rangeSum(ft, l, r):  # Sum of [l..r] (1-indexed)
-    if l == 1:
-        return ft.getSum(r)
-    return ft.getSum(r) - ft.getSum(l - 1)
+# Built-in range query method
+bit = BIT([1, 2, 3, 4, 5])
+print(bit.rangeQuery(2, 4))  # Sum of indices 2,3,4 = 2+3+4 = 9
 
-# Example usage
-ft = FT([1, 2, 3, 4, 5])
-print(rangeSum(ft, 2, 4))  # Sum of indices 2,3,4 = 2+3+4 = 9
+# Manual range query (equivalent)
+def manualRangeSum(bit, l, r):
+    if l == 1:
+        return bit.prefixQuery(r)
+    return bit.prefixQuery(r) - bit.prefixQuery(l - 1)
 ```
 
-### Point Update vs Range Update
+### Frequency Table / Counting
 ```python
-# Point update: set arr[i] = val
-def pointUpdate(ft, i, newVal, oldVal):
-    ft.update(i, newVal - oldVal)
+# Count elements ≤ x
+bit = BIT([0] * 1001)  # For values 1-1000
+
+# Add element with value x
+def addElement(bit, x):
+    bit.update(x, 1)
+
+# Count how many elements ≤ x
+def countLE(bit, x):
+    return bit.prefixQuery(x)
+
+# Count elements in range [l, r]
+def countRange(bit, l, r):
+    return bit.rangeQuery(l, r)
+```
+
+### Inversion Counting
+```python
+def countInversions(arr):
+    # Coordinate compression
+    sorted_vals = sorted(set(arr))
+    compress = {v: i+1 for i, v in enumerate(sorted_vals)}
+    
+    bit = BIT([0] * len(sorted_vals))
+    inversions = 0
+    
+    for num in reversed(arr):
+        compressed = compress[num]
+        inversions += bit.prefixQuery(compressed - 1)  # Count smaller elements
+        bit.update(compressed, 1)  # Add current element
+    
+    return inversions
+```
+
+### Point Update Techniques
+```python
+# Add/Subtract: Direct operation
+bit.update(i, 5)    # Add 5 to index i
+bit.update(i, -3)   # Subtract 3 from index i
+
+# Set/Overwrite: Requires old value
+def setValue(bit, i, newVal, oldVal):
+    bit.update(i, newVal - oldVal)
+
+# Toggle operations
+def toggle(bit, i, isOn):
+    bit.update(i, 1 if isOn else -1)
 
 # Multiple updates
-ft = FT([1, 2, 3, 4, 5])
-ft.update(2, 5)   # Add 5 to index 2
-ft.update(4, -2)  # Subtract 2 from index 4
-print(ft.getSum(5))  # Updated sum
+bit = BIT([1, 2, 3, 4, 5])
+bit.update(2, 5)   # Add 5 to index 2
+bit.update(4, -2)  # Subtract 2 from index 4
+print(bit.prefixQuery(5))  # Updated sum
 ```
 
 ## Bit Manipulation Explained
@@ -157,6 +208,41 @@ def lsb(x):
 - **No Range Min/Max**: Cannot efficiently support min/max queries
 - **Fixed Size**: Cannot dynamically resize like some other structures
 
+## What Fenwick Tree Can Handle
+
+### Core Applications
+- **Range Sums**: Prefix and range sum queries with updates
+- **Frequency Tables**: Count occurrences, maintain dynamic histograms
+- **Inversion Counting**: Count inversions and reverse pairs efficiently
+- **Order Statistics**: k-th element queries with dynamic updates
+- **Multi-dimensional**: 2D BITs for submatrix operations
+
+### Problem Keywords That Hint BIT Usage
+- **Prefix sum / Cumulative sum**
+- **Number of elements ≤ x / Count of smaller elements**
+- **Count of inversions / reverse pairs**
+- **Frequency table / occurrences**
+- **Dynamic array with updates**
+- **Insert and query counts efficiently**
+- **Order statistics (find k-th element, rank queries)**
+- **2D prefix sums with updates**
+- **Range sum queries + point updates**
+
+## ✅ What's Possible
+
+- **Add/Subtract**: Point updates with positive/negative values
+- **Set/Overwrite**: Indirect via `update(i, new_val - old_val)`
+- **Frequency Counting**: Increment/decrement counts dynamically
+- **Toggle Operations**: On-off switches (+1 for on, -1 for off)
+- **XOR Operations**: Any associative, invertible operation
+
+## ❌ What's Not Possible
+
+- **Direct Replace**: Without knowing old value (needs delta calculation)
+- **Non-linear Updates**: Multiply all elements, bitwise ops
+- **Min/Max Updates**: Range minimum/maximum operations
+- **Arbitrary Operations**: Limited to associative, invertible operations
+
 ## Use Cases
 
 ### Competitive Programming
@@ -179,36 +265,36 @@ def lsb(x):
 
 ## Extensions
 
-### 2D Fenwick Tree
+### 2D Binary Indexed Tree
 ```python
-class FenwickTree2D:
+class BIT2D:
     def __init__(self, matrix):
         self.rows, self.cols = len(matrix), len(matrix[0])
-        self.tree = [[0] * (self.cols + 1) for _ in range(self.rows + 1)]
+        self.bit = [[0] * (self.cols + 1) for _ in range(self.rows + 1)]
         
     def update(self, r, c, val):
         i = r + 1
         while i <= self.rows:
             j = c + 1
             while j <= self.cols:
-                self.tree[i][j] += val
+                self.bit[i][j] += val
                 j += j & (-j)
             i += i & (-i)
 ```
 
 ### Range Update Point Query
 ```python
-class RangeUpdateFT:
+class RangeUpdateBIT:
     def __init__(self, n):
-        self.ft = FT([0] * n)
+        self.bit = BIT([0] * n)
     
     def rangeUpdate(self, l, r, val):
-        self.ft.update(l, val)
-        if r + 1 <= self.ft.n:
-            self.ft.update(r + 1, -val)
+        self.bit.update(l, val)
+        if r + 1 <= self.bit.n:
+            self.bit.update(r + 1, -val)
     
     def pointQuery(self, i):
-        return self.ft.getSum(i)
+        return self.bit.prefixQuery(i)
 ```
 
 ## Fenwick Tree vs Other Structures
@@ -222,10 +308,12 @@ class RangeUpdateFT:
 
 **When to Choose Fenwick Tree:**
 - Need efficient point updates and range queries
-- Operations are associative (sum, XOR, etc.)
+- Operations are associative and invertible (sum, XOR, etc.)
 - Memory usage is a concern
 - Implementation simplicity is important
-- Working with 1D arrays primarily
+- Working with frequency counting or order statistics
+- Problem involves counting inversions or smaller elements
+- Need dynamic prefix sums
 
 **When to Choose Segment Tree:**
 - Need range updates
@@ -237,9 +325,10 @@ class RangeUpdateFT:
 
 1. **Index Confusion**: Remember Fenwick Tree is 1-indexed internally
 2. **Overflow**: Be careful with large sums, use appropriate data types
-3. **Negative Updates**: Ensure the operation supports negative values
-4. **Range Queries**: Don't forget to handle l=1 case in range sum
-5. **Initialization**: Build tree properly during construction
+3. **Operation Limitations**: Only works with associative, invertible operations
+4. **Set Operations**: Need old value to compute delta for setting new values
+5. **Range Queries**: Don't forget to handle l=1 case in range sum
+6. **Coordinate Compression**: Remember to compress large value ranges
 
 ## References
 

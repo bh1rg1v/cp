@@ -1,24 +1,28 @@
-class FT:
+class BIT:
 
     def __init__(self, nums):
 
         self.n = len(nums)
-        self.FT = [0] * (self.n + 1)
+        self.bit = [0] * (self.n + 1)
 
-        for idx in range(self.n):
-            self.update(idx + 1, nums[idx])
+        for idx, val in enumerate(nums, 1):
+            self.update(idx, val)
 
     def update(self, idx, val):
 
         while idx <= self.n:
-            self.FT[idx] += val
+            self.bit[idx] += val
             idx += idx & (-idx)
 
-    def getSum(self, idx):
+    def prefixQuery(self, idx):
 
         res = 0
         while idx > 0:
-            res += self.FT[idx]
+            res += self.bit[idx]
             idx -= idx & (-idx)
 
         return res
+    
+    def rangeQuery(self, l, r):
+
+        return self.prefixQuery(r) - self.prefixQuery(l - 1)
