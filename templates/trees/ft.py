@@ -5,20 +5,20 @@ class FT:
         self.n = len(nums)
         self.FT = [0] * (self.n + 1)
 
-        for i in range(self.n):
-            self.update(i + 1, nums[i])
+        for idx in range(self.n):
+            self.update(idx + 1, nums[idx])
 
-    def update(self, i, val):
+    def update(self, idx, val):
 
-        while i <= self.n:
-            self.FT[i] += val
-            i += i & (-i)
+        while idx <= self.n:
+            self.FT[idx] += val
+            idx += idx & (-idx)
 
-    def getSum(self, i):
+    def getSum(self, idx):
 
         res = 0
-        while i > 0:
-            res += self.FT[i]
-            i -= i & (-i)
+        while idx > 0:
+            res += self.FT[idx]
+            idx -= idx & (-idx)
 
         return res
