@@ -14,7 +14,7 @@ class BIT:
             self.bit[idx] += val
             idx += idx & (-idx)
 
-    def prefixQuery(self, idx):
+    def query(self, idx):
 
         res = 0
         while idx > 0:
@@ -23,6 +23,6 @@ class BIT:
 
         return res
     
-    def rangeQuery(self, l, r):
+    def rangeQuery(self, left, right):
 
-        return self.prefixQuery(r) - self.prefixQuery(l - 1)
+        return self.query(right) - self.query(left - 1)
