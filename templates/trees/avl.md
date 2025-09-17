@@ -57,8 +57,13 @@ def rightRotate(root):
 
     return newRoot
 ```
-
-**When**: Left subtree is heavier (balance > 1)
+```
+    z              y
+   /              / \
+  y       →      x   z
+ /
+x
+```
 
 ### Left Rotation (RR Case)
 ```python
@@ -72,8 +77,13 @@ def leftRotate(root):
 
     return newRoot
 ```
-
-**When**: Right subtree is heavier (balance < -1)
+```
+  x                y
+   \      →       / \
+    y            x   z
+     \
+      z
+```
 
 ## Insertion
 
@@ -97,32 +107,68 @@ def insert(root, key):
     balance = getBalance(root)
 
     # 4. Perform rotations if unbalanced
-    # LL Case
+    # LL Case: Left-Left imbalance
     if balance > 1 and key < root.left.val:
         return rightRotate(root)
 
-    # RR Case
+    # RR Case: Right-Right imbalance  
     if balance < -1 and key > root.right.val:
         return leftRotate(root)
 
-    # LR Case
+    # LR Case: Left-Right imbalance
     if balance > 1 and key > root.left.val:
-        root.left = leftRotate(root.left)
-        return rightRotate(root)
+        root.left = leftRotate(root.left)   # First left rotation
+        return rightRotate(root)            # Then right rotation
 
-    # RL Case
+    # RL Case: Right-Left imbalance
     if balance < -1 and key < root.right.val:
-        root.right = rightRotate(root.right)
-        return leftRotate(root)
+        root.right = rightRotate(root.right)  # First right rotation
+        return leftRotate(root)               # Then left rotation
 
     return root
 ```
 
 ### Rotation Cases
-1. **LL Case**: Left-Left → Right Rotation
-2. **RR Case**: Right-Right → Left Rotation  
-3. **LR Case**: Left-Right → Left + Right Rotation
-4. **RL Case**: Right-Left → Right + Left Rotation
+
+#### 1. LL Case (Left-Left) → Right Rotation
+```
+Before:          After:
+    z              y
+   /              / \
+  y              x   z
+ /
+x
+```
+
+#### 2. RR Case (Right-Right) → Left Rotation
+```
+Before:          After:
+  x                y
+   \              / \
+    y            x   z
+     \
+      z
+```
+
+#### 3. LR Case (Left-Right) → Left + Right Rotation
+```
+Before:          After Left:      After Right:
+    z                z                y
+   /                /                / \
+  x                y                x   z
+   \
+    y
+```
+
+#### 4. RL Case (Right-Left) → Right + Left Rotation
+```
+Before:          After Right:     After Left:
+  x                x                y
+   \                \              / \
+    z                y            x   z
+   /
+  y
+```
 
 ## Deletion
 

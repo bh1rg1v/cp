@@ -48,6 +48,13 @@ def leftRotate(self, node):
     if node == self.root:
         self.root = newParent
 ```
+```
+  x                y
+   \      →       / \
+    y            x   z
+     \
+      z
+```
 
 #### Right Rotation
 ```python
@@ -63,6 +70,13 @@ def rightRotate(self, node):
     
     if node == self.root:
         self.root = newParent
+```
+```
+    z              y
+   /      →       / \
+  y              x   z
+ /
+x
 ```
 
 ## Insertion
@@ -116,33 +130,75 @@ def fixRedRed(self, node):
         # Case 2: Black uncle - Rotate
         if parent.isOnLeft():
             if node.isOnLeft():
-                # LL Case
+                # LL Case: Right rotation on grandparent
                 self.swapColors(parent, grandparent)
                 self.rightRotate(grandparent)
             else:
-                # LR Case
+                # LR Case: Left rotation on parent, then right on grandparent
                 self.leftRotate(parent)
                 self.swapColors(node, grandparent)
                 self.rightRotate(grandparent)
         else:
             if node.isOnLeft():
-                # RL Case
+                # RL Case: Right rotation on parent, then left on grandparent
                 self.rightRotate(parent)
                 self.swapColors(node, grandparent)
                 self.leftRotate(grandparent)
             else:
-                # RR Case
+                # RR Case: Left rotation on grandparent
                 self.swapColors(parent, grandparent)
                 self.leftRotate(grandparent)
 ```
 
 ### Insertion Cases
-1. **Red Uncle**: Recolor parent, uncle to black; grandparent to red
-2. **Black Uncle**: Perform rotations based on node positions
-   - **LL**: Right rotation on grandparent
-   - **LR**: Left rotation on parent, then right on grandparent
-   - **RL**: Right rotation on parent, then left on grandparent
-   - **RR**: Left rotation on grandparent
+
+#### Case 1: Red Uncle - Recolor
+```
+Before:          After:
+    G(B)             G(R)
+   /    \           /    \
+  P(R)  U(R)  →   P(B)  U(B)
+ /                /
+N(R)            N(R)
+```
+
+#### Case 2: Black Uncle - Rotations
+
+**LL Case**: Right rotation on grandparent
+```
+    G(B)             P(B)
+   /        →       /    \
+  P(R)            N(R)  G(R)
+ /
+N(R)
+```
+
+**LR Case**: Left rotation on parent, then right on grandparent
+```
+    G(B)         G(B)           N(B)
+   /      →     /      →      /    \
+  P(R)         N(R)         P(R)  G(R)
+   \           /
+   N(R)       P(R)
+```
+
+**RL Case**: Right rotation on parent, then left on grandparent
+```
+  G(B)           G(B)           N(B)
+   \      →       \      →      /    \
+   P(R)           N(R)       G(R)  P(R)
+   /               \
+  N(R)             P(R)
+```
+
+**RR Case**: Left rotation on grandparent
+```
+  G(B)             P(B)
+   \      →       /    \
+   P(R)         G(R)  N(R)
+    \
+    N(R)
+```
 
 ## Deletion
 
@@ -204,19 +260,49 @@ def fixBlackBlack(self, node):
             if sibling.hasRedChild():
                 # Case 2a: Black sibling with red child
                 # Perform rotations based on red child position
+                if sibling.hasRedChild():
+                    # Rotate to move red child up and recolor
+                    pass  # Complex rotation logic based on child positions
             else:
                 # Case 2b: Black sibling with black children
                 sibling.color = COLOR.RED
                 if parent.color == COLOR.BLACK:
-                    self.fixBlackBlack(parent)
+                    self.fixBlackBlack(parent)  # Propagate double-black up
                 else:
-                    parent.color = COLOR.BLACK
+                    parent.color = COLOR.BLACK  # Parent absorbs extra black
 ```
 
 ### Deletion Cases
-1. **Red Sibling**: Rotate to convert to black sibling case
-2. **Black Sibling with Red Child**: Rotate based on red child position
-3. **Black Sibling with Black Children**: Recolor sibling to red
+
+#### Case 1: Red Sibling
+```
+Before:          After:
+    P(B)             S(B)
+   /    \           /    \
+  N(B)  S(R)  →   P(R)  SR(B)
+        /  \       /  \
+      SL(B) SR(B) N(B) SL(B)
+```
+
+#### Case 2: Black Sibling with Red Child
+```
+Before:          After:
+    P(?)             S(?)
+   /    \           /    \
+  N(B)  S(B)  →   P(B)  SR(B)
+        /  \       /
+      SL(?) SR(R) N(B)
+```
+
+#### Case 3: Black Sibling with Black Children
+```
+Before:          After:
+    P(?)             P(?)
+   /    \           /    \
+  N(B)  S(B)  →   N(B)  S(R)
+        /  \             /  \
+      SL(B) SR(B)      SL(B) SR(B)
+```
 
 ## Complexity Analysis
 
