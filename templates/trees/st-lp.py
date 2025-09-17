@@ -1,5 +1,3 @@
-# Segment Tree: range sum queries + range updates (lazy propagation)
-
 class SegmentTreeLP:
     def __init__(self, arr):
 

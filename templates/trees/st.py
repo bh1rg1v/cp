@@ -1,5 +1,3 @@
-# Segment Tree: range min/max queries + point updates
-
 class SegmentTree:
     def __init__(self, arr, mode="min"):
 

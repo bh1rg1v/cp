@@ -1,4 +1,3 @@
-
 def preOrder(root):
     return [root.data] + preOrder(root.left) + preOrder(root.right) if root else []
 

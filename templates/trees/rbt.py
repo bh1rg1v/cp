@@ -1,5 +1,3 @@
-# Red-Black Tree Implementation
-
 class COLOR:
     RED = "RED"
     BLACK = "BLACK"
@@ -87,7 +85,7 @@ class RBT:
         elif key > root.val:
             root.right = self.insertHelper(root.right, key)
             root.right.parent = root
-        elif key == root.val:   # Duplicate keys are ignored
+        elif key == root.val:
             return root
         
         return root
@@ -107,12 +105,10 @@ class RBT:
         
         self.root = self.insertHelper(self.root, key)
         
-        # Find the newly inserted node and fix violations
         newNode = self.findNode(self.root, key)
         if newNode:
             self.fixRedRed(newNode)
         
-        # Update root to actual root
         while self.root.parent:
             self.root = self.root.parent
 
@@ -135,31 +131,25 @@ class RBT:
         uncle = node.uncle()
         
         if uncle and uncle.color == COLOR.RED:
-            # Case 1: Uncle is red - recolor
             parent.color = COLOR.BLACK
             uncle.color = COLOR.BLACK
             grandparent.color = COLOR.RED
             self.fixRedRed(grandparent)
         else:
-            # Case 2: Uncle is black - rotate
             if parent.isOnLeft():
                 if node.isOnLeft():
-                    # LL Case
                     self.swapColors(parent, grandparent)
                     self.rightRotate(grandparent)
                 else:
-                    # LR Case
                     self.leftRotate(parent)
                     self.swapColors(node, grandparent)
                     self.rightRotate(grandparent)
             else:
                 if node.isOnLeft():
-                    # RL Case
                     self.rightRotate(parent)
                     self.swapColors(node, grandparent)
                     self.leftRotate(grandparent)
                 else:
-                    # RR Case
                     self.swapColors(parent, grandparent)
                     self.leftRotate(grandparent)
 
@@ -184,22 +174,17 @@ class RBT:
     def deleteNode(self, node):
         replaceNode = self.BSTReplace(node)
         
-        # Store original colors
         nodeColor = node.color
         
         if node == self.root and replaceNode is None:
             self.root = None
             return node
             
-        # Replace node with replaceNode
         if replaceNode:
-            # Copy value instead of replacing structure for two children case
             if node.left and node.right:
                 node.val = replaceNode.val
-                # Now delete the successor
                 return self.deleteNode(replaceNode)
             else:
-                # Single child case
                 if node.parent:
                     if node.isOnLeft():
                         node.parent.left = replaceNode
@@ -210,7 +195,6 @@ class RBT:
                     self.root = replaceNode
                     replaceNode.parent = None
         else:
-            # No children case
             if node.parent:
                 if node.isOnLeft():
                     node.parent.left = None
@@ -219,7 +203,6 @@ class RBT:
             else:
                 self.root = None
 
-        # Fix violations if deleted node was black
         if nodeColor == COLOR.BLACK:
             if replaceNode and replaceNode.color == COLOR.RED:
                 replaceNode.color = COLOR.BLACK
@@ -236,11 +219,9 @@ class RBT:
         parent = node.parent
 
         if sibling is None:
-            # No sibling, fix parent
             self.fixBlackBlack(parent)
         else:
             if sibling.color == COLOR.RED:
-                # Case 1: Red sibling
                 parent.color = COLOR.RED
                 sibling.color = COLOR.BLACK
                 if sibling.isOnLeft():
@@ -249,34 +230,27 @@ class RBT:
                     self.leftRotate(parent)
                 self.fixBlackBlack(node)
             else:
-                # Case 2: Black sibling
                 if sibling.hasRedChild():
-                    # Case 2a: Black sibling with red child
                     if sibling.left and sibling.left.color == COLOR.RED:
                         if sibling.isOnLeft():
-                            # Left Left Case
                             sibling.left.color = sibling.color
                             sibling.color = parent.color
                             self.rightRotate(parent)
                         else:
-                            # Right Left Case
                             sibling.left.color = parent.color
                             self.rightRotate(sibling)
                             self.leftRotate(parent)
                     else:
                         if sibling.isOnLeft():
-                            # Left Right Case
                             sibling.right.color = parent.color
                             self.leftRotate(sibling)
                             self.rightRotate(parent)
                         else:
-                            # Right Right Case
                             sibling.right.color = sibling.color
                             sibling.color = parent.color
                             self.leftRotate(parent)
                     parent.color = COLOR.BLACK
                 else:
-                    # Case 2b: Black sibling with black children
                     sibling.color = COLOR.RED
                     if parent.color == COLOR.BLACK:
                         self.fixBlackBlack(parent)
