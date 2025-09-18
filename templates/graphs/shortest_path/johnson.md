@@ -15,7 +15,7 @@ Johnson's algorithm combines Bellman-Ford and Dijkstra's algorithms:
 
 ### Basic Johnson's Algorithm
 ```python
-def johnson_all_pairs(graph, n):
+def johnson(graph, n):
     # Step 1: Add auxiliary vertex
     extended_graph = defaultdict(list)
     for u in graph:
@@ -26,7 +26,7 @@ def johnson_all_pairs(graph, n):
         extended_graph[n].append((i, 0))  # Auxiliary vertex n
     
     # Step 2: Run Bellman-Ford from auxiliary vertex
-    h = bellman_ford_johnson(extended_graph, n, n + 1)
+    h = bellmanFord(extended_graph, n, n + 1)
     if h is None:
         return None  # Negative cycle detected
     
@@ -40,7 +40,7 @@ def johnson_all_pairs(graph, n):
     # Step 4: Run Dijkstra from each vertex
     all_distances = {}
     for u in range(n):
-        dist = dijkstra_johnson(reweighted_graph, u, h)
+        dist = dijkstra(reweighted_graph, u, h)
         
         # Step 5: Convert back to original distances
         original_dist = {}
@@ -64,10 +64,10 @@ Where `h` is the potential function from Bellman-Ford.
 
 ### Dijkstra with Reweighted Edges
 ```python
-def dijkstra_johnson(graph, start, h):
+def dijkstra(graph, source, h):
     dist = defaultdict(lambda: float('inf'))
-    dist[start] = 0
-    pq = [(0, start)]
+    dist[source] = 0
+    pq = [(0, source)]
     
     while pq:
         d, u = heapq.heappop(pq)
@@ -158,84 +158,32 @@ def dijkstra_johnson(graph, start, h):
 - **Decision Trees**: Multi-criteria optimization problems
 - **Resource Management**: Systems with synergies and conflicts
 
-## Algorithm Variants
+## Core Implementation
 
-### Johnson's with Path Reconstruction
-```python
-def johnson_with_path(graph, n):
-    # ... (reweighting steps same as above) ...
-    
-    all_distances = {}
-    all_parents = {}
-    
-    for u in range(n):
-        dist, parent = dijkstra_with_path(reweighted_graph, u)
-        
-        # Convert distances back
-        original_dist = {}
-        for v in dist:
-            if dist[v] != float('inf'):
-                original_dist[v] = dist[v] - h[u] + h[v]
-            else:
-                original_dist[v] = float('inf')
-        
-        all_distances[u] = original_dist
-        all_parents[u] = parent
-    
-    return all_distances, all_parents
-```
+The implementation consists of three essential functions:
 
-### Optimized for Edge List
+### Bellman-Ford for Potential Function
 ```python
-def johnson_sparse_optimized(edges, n):
-    # Work directly with edge list for better cache performance
-    extended_edges = edges + [(n, i, 0) for i in range(n)]
+def bellmanFord(graph, source, n):
+    dist = [float('inf')] * n
+    dist[source] = 0
     
-    # Bellman-Ford on edge list
-    dist = [float('inf')] * (n + 1)
-    dist[n] = 0
-    
-    for _ in range(n):
-        for u, v, w in extended_edges:
-            if dist[u] != float('inf') and dist[u] + w < dist[v]:
-                dist[v] = dist[u] + w
+    # Relax edges n-1 times
+    for _ in range(n - 1):
+        for u in graph:
+            if dist[u] != float('inf'):
+                for v, w in graph[u]:
+                    if dist[u] + w < dist[v]:
+                        dist[v] = dist[u] + w
     
     # Check for negative cycles
-    for u, v, w in extended_edges:
-        if dist[u] != float('inf') and dist[u] + w < dist[v]:
-            return None
+    for u in graph:
+        if dist[u] != float('inf'):
+            for v, w in graph[u]:
+                if dist[u] + w < dist[v]:
+                    return None  # Negative cycle detected
     
-    h = dist[:n]
-    
-    # Build reweighted adjacency list and run Dijkstra
-    # ... (rest of implementation)
-```
-
-### Parallel Johnson's
-```python
-def johnson_parallel(graph, n):
-    # Reweighting phase (sequential)
-    h = compute_potential_function(graph, n)
-    if h is None:
-        return None
-    
-    reweighted_graph = reweight_edges(graph, h)
-    
-    # Parallel Dijkstra phase
-    from concurrent.futures import ThreadPoolExecutor
-    
-    def dijkstra_for_source(u):
-        return u, dijkstra_johnson(reweighted_graph, u, h)
-    
-    all_distances = {}
-    with ThreadPoolExecutor() as executor:
-        results = executor.map(dijkstra_for_source, range(n))
-        for u, dist in results:
-            # Convert back to original distances
-            original_dist = {v: d - h[u] + h[v] for v, d in dist.items()}
-            all_distances[u] = original_dist
-    
-    return all_distances
+    return dist
 ```
 
 ## Comparison with Other Algorithms
@@ -268,14 +216,21 @@ This ensures all vertices are reachable from auxiliary vertex.
 original_distance = reweighted_distance - h[u] + h[v]
 ```
 
-### Memory Optimization
+### Usage Example
 ```python
-# Process one source at a time to save memory
-def johnson_memory_efficient(graph, n):
-    h = compute_potential_function(graph, n)
-    
-    for u in range(n):
-        yield u, dijkstra_johnson_single(graph, u, h)
+# Example usage
+graph = {
+    0: [(1, -1), (2, 4)],
+    1: [(2, 3), (3, 2)],
+    2: [],
+    3: [(2, 5)]
+}
+
+result = johnson(graph, 4)
+if result is None:
+    print("Negative cycle detected")
+else:
+    print("All-pairs shortest distances:", result)
 ```
 
 ## Common Pitfalls
