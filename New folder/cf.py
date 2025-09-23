@@ -1,0 +1,19 @@
+import sys
+from collections import Counter, defaultdict, deque, namedtuple
+import heapq, bisect, string
+from math import gcd, lcm, sqrt, ceil, floor, factorial, comb, perm, log2
+from itertools import permutations, combinations, product, accumulate, groupby
+from functools import lru_cache, reduce
+
+
+for t in range(int(input())):
+
+    # n, m = map(int, input().split())
+    # nums = list(map(int, input().split()))
+
+    # n = int(input())
+    # nums = list(map(int, input().split()))
+
+    # freq = Counter(nums)
+
+    pass
