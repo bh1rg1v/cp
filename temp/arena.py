@@ -617,3 +617,4 @@ def articulationPoints(graph, n):
             dfs(node, -1, graph, visited, low, tin, timer, ans)
 
     return list(ans) if ans else [-1]
+

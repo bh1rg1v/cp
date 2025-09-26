@@ -8,12 +8,13 @@ from functools import lru_cache, reduce
 
 for t in range(int(input())):
 
-    # n, m = map(int, input().split())
-    # nums = list(map(int, input().split()))
+    # n, k = map(int, input().split())
+    n = int(input())
+    
+    arr = list(map(str, input().split()))
 
-    # n = int(input())
-    # nums = list(map(int, input().split()))
+    a = arr.count('a')
+    b = arr.count('b')
 
-    # freq = Counter(nums)
-
-    pass
+    
+    
