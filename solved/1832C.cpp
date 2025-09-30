@@ -65,8 +65,28 @@ int main() {
 
 void solve() {
 
-    int n; cin >> n; vector<int> nums(n); for (int i = 0; i < n; i++) cin >> nums[i];
+    int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
 
-    // int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+    // int n, k; cin >> n >> k; vector<int> a(n, 0); for (int i = 0; i < n; i++) cin >> a[i];
+
+    int contrast = 0;
+
+    for (int i = 1; i < n; i++) contrast += abs(a[i] - a[i - 1]);
+
+    if (contrast == 0) {
+        cout << 1 << "\n";
+        return;
+    }
+
+    n = unique(a.begin(), a.end()) - a.begin();
+
+    int ans = n;
+
+    for (int i = 0; i < n - 2; ++i) {
+        ans -= (a[i] < a[i + 1] && a[i + 1] < a[i + 2]);
+        ans -= (a[i] > a[i + 1] && a[i + 1] > a[i + 2]);
+    }
+
+    cout << ans << "\n";
 
 }

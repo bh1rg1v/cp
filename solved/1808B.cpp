@@ -65,8 +65,29 @@ int main() {
 
 void solve() {
 
-    int n; cin >> n; vector<int> nums(n); for (int i = 0; i < n; i++) cin >> nums[i];
+    // int n; cin >> n; vector<int> nums(n); for (int i = 0; i < n; i++) cin >> nums[i];
 
-    // int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+    // int n, m; cin >> n >> m; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+
+
+    int n, m; cin >> n >> m;
+    vector<vector<int>> mat(n, vector<int>(m, 0)); for (int i = 0; i < n; i++) for (int j = 0; j < m; j++) cin >> mat[i][j];
+
+    long long ans = 0;
+
+    for (int j = 0; j < m; j++) {
+
+        vector<int> col(n);
+        for (int i = 0; i < n; i++) col[i] = mat[i][j];
+
+        sort(col.begin(), col.end());
+
+
+        for (int i = 0; i < n; i++) {
+            ans += 1LL * col[i] * i - 1LL * col[i] * (n - i - 1);
+        }
+    }
+
+    cout << ans << "\n";
 
 }
