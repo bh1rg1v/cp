@@ -89,24 +89,68 @@ int miniMax(vector<int>& nums, int k) {
 
 void solve();
 
+// int main() {
+
+//     ios::sync_with_stdio(false);
+//     cin.tie(nullptr);
+
+//     int t;
+//     cin >> t;
+//     while (t--) solve();
+
+//     return 0;
+// }
+
 int32_t main() {
 
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
 
-    int t;
-    cin >> t;
-    while (t--) solve();
-
-    return 0;
-}
-
-void solve() {
-
-    int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
-
-    // int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+    int n, queries; cin >> n >> queries; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
     // int n, m; cin >> n >> m; vector<vector<int>> mat(n, vector<int>(m)); for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> mat[i][j];
 
+    int ans = SUM(nums);
+    int outgoing;
+
+    vector<pll> tracker(n, {0, 0});
+    pll globalVal = {0, -1};
+
+    for (int i = 0; i < n; i++) {
+        tracker[i].ff = nums[i];
+    }
+
+    for (int q = 1; q <= queries; q++) {
+
+        int type;
+        cin >> type;
+
+        if (type == 1) {
+
+            int idx, incoming;
+            cin >> idx >> incoming;
+
+            idx -= 1;
+
+            if (tracker[idx].ss >= globalVal.ss) {
+                ans += (incoming - tracker[idx].ff);
+            } else {
+                ans += (incoming - globalVal.ff);
+            }
+
+            tracker[idx] = {incoming, q};
+
+        } else {
+
+            int val;
+            cin >> val;
+
+            globalVal = {val, q};
+
+            ans = val * n; 
+        }
+
+        pans;
+    }
+
+    return 0;
 
 }

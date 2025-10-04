@@ -15,8 +15,8 @@ const int MOD = 1e9+7;
 #define pb push_back
 #define mp make_pair
 #define all(v) (v).begin(), (v).end()
-#define ff first
-#define ss second
+#define f first
+#define s second
 #define sz(x) (int)(x).size()
 
 #define pans cout << ans << endl
@@ -24,7 +24,6 @@ const int MOD = 1e9+7;
 #define pno cout << "NO" << endl
 #define pm1 cout << -1 << endl
 #define pvec(v) for (auto x : v) cout << x << " "; cout << "\n";
-#define int long long
 
 #define MAX(v) (*max_element((v).begin(), (v).end()))
 #define MIN(v) (*min_element((v).begin(), (v).end()))
@@ -50,7 +49,7 @@ int maxiMin(vector<int>& nums, int k) {
     int n = nums.size();
 
     int low = 0;
-    int high = (int)1e9;
+    int high = int(1e9);
 
     while (low <= high) {
 
@@ -69,7 +68,7 @@ int miniMax(vector<int>& nums, int k) {
     int ans = -1;
 
     int low = 0;
-    int high = (int)1e9;
+    int high = int(1e9);
 
     while (low <= high) {
 
@@ -89,7 +88,7 @@ int miniMax(vector<int>& nums, int k) {
 
 void solve();
 
-int32_t main() {
+int main() {
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -103,10 +102,47 @@ int32_t main() {
 
 void solve() {
 
-    int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
+    // int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
 
-    // int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+    int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
     // int n, m; cin >> n >> m; vector<vector<int>> mat(n, vector<int>(m)); for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> mat[i][j];
+
+    int total = SUM(nums);
+    int ans = 0;
+
+    if (total < k) {
+        pm1;
+        return;
+    } else if (total == k) {
+        pans;
+        return;
+    }
+
+    int largestWindow = -1;
+
+    int l = 0;
+    int r = 0;
+
+    int currSum = 0;
+
+    for (int r = 0; r < n; r++) {
+
+        currSum += nums[r];
+
+        while (currSum > k && l <= r) {
+            currSum -= nums[l];
+            l++;
+        }
+
+        if (currSum == k) {
+            largestWindow = max(largestWindow, r - l + 1);
+        }
+
+    }
+
+    ans = n - largestWindow;
+    pans;
+
 
 
 }

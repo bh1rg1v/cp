@@ -15,8 +15,8 @@ const int MOD = 1e9+7;
 #define pb push_back
 #define mp make_pair
 #define all(v) (v).begin(), (v).end()
-#define ff first
-#define ss second
+#define f first
+#define s second
 #define sz(x) (int)(x).size()
 
 #define pans cout << ans << endl
@@ -24,11 +24,9 @@ const int MOD = 1e9+7;
 #define pno cout << "NO" << endl
 #define pm1 cout << -1 << endl
 #define pvec(v) for (auto x : v) cout << x << " "; cout << "\n";
-#define int long long
 
 #define MAX(v) (*max_element((v).begin(), (v).end()))
 #define MIN(v) (*min_element((v).begin(), (v).end()))
-#define SUM(v) accumulate((v).begin(), (v).end(), 0LL)
 
 #define OFREQ(v) ([](auto &vec){ map<decltype(vec[0]), int> m; for (auto &x : vec) m[x]++; return m; }(v))
 #define FREQ(v) ([](auto &vec){ unordered_map<decltype(vec[0]), int> m; for (auto &x : vec) m[x]++; return m; }(v))
@@ -50,7 +48,7 @@ int maxiMin(vector<int>& nums, int k) {
     int n = nums.size();
 
     int low = 0;
-    int high = (int)1e9;
+    int high = int(1e9);
 
     while (low <= high) {
 
@@ -69,7 +67,7 @@ int miniMax(vector<int>& nums, int k) {
     int ans = -1;
 
     int low = 0;
-    int high = (int)1e9;
+    int high = int(1e9);
 
     while (low <= high) {
 
@@ -89,7 +87,7 @@ int miniMax(vector<int>& nums, int k) {
 
 void solve();
 
-int32_t main() {
+int main() {
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -103,10 +101,51 @@ int32_t main() {
 
 void solve() {
 
-    int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
+    // int n; cin >> n; vector<int> a(n); for (int i = 0; i < n; i++) cin >> a[i];
 
-    // int n, k; cin >> n >> k; vector<int> nums(n, 0); for (int i = 0; i < n; i++) cin >> nums[i];
+    int n, m; cin >> n >> m; vector<int> a(m, 0); for (int i = 0; i < m; i++) cin >> a[i];
     // int n, m; cin >> n >> m; vector<vector<int>> mat(n, vector<int>(m)); for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> mat[i][j];
+
+    sort(all(a));
+
+    vector<int> gaps;
+
+    for (int i = 0; i < m - 1; i++){
+        int gap = a[i + 1] - a[i] - 1;
+        if (gap > 0) gaps.push_back(gap);
+    }
+
+    int lastGap = (a[0] + n) - a[m - 1] - 1;
+    if (lastGap > 0) gaps.push_back(lastGap);
+
+    sort(all(gaps));
+    reverse(all(gaps));
+
+    int days = 0;
+    int saved = 0;
+
+    for (int gap : gaps) {
+        
+        int canBeAffected = gap - 2*days;
+        int val = canBeAffected;
+
+        if (val <= 0) {
+            continue;
+        }
+
+        if (val == 1) {
+            saved += 1;
+            days += 1;
+        } else {
+            saved += (val - 1);
+            days += 2;
+        }
+    }
+
+    int ans = n - saved;
+
+    pans;
+
 
 
 }
