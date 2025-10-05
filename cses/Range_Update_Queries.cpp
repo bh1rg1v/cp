@@ -316,9 +316,33 @@ int32_t main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int t;
-    cin >> t;
-    while (t--) solve();
+    int n, q;
+    cin >> n >> q;
+
+    vector<int> nums(n); for (int i = 0; i < n; i++) cin >> nums[i];
+
+    LazySegmentTree st(nums, "sum");
+
+    for (int i = 0; i < q; i++) {
+
+            int type;
+            cin >> type;
+
+            if (type == 1) {
+
+                int l, r, diff;
+                cin >> l >> r >> diff;
+                
+                st.update(l - 1, r - 1, diff);
+
+            } else if (type == 2) {
+
+                int l; cin >> l;
+                cout << st.query(l - 1, l - 1) << endl;
+                
+            }
+        
+    }
 
     return 0;
 }

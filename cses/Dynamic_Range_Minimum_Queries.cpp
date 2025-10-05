@@ -170,97 +170,6 @@ public:
     }
 };
 
-#include <bits/stdc++.h>
-using namespace std;
-
-class LazySegmentTree {
-    int n;
-    string mode;
-    vector<long long> seg, lazy;
-
-    long long combine(long long a, long long b) const {
-        if (mode == "sum") return a + b;
-        if (mode == "min") return min(a, b);
-        if (mode == "max") return max(a, b);
-        if (mode == "xor") return a ^ b;
-        return 0;
-    }
-
-    long long neutral() const {
-        if (mode == "sum" || mode == "xor") return 0;
-        if (mode == "min") return LLONG_MAX;
-        if (mode == "max") return LLONG_MIN;
-        return 0;
-    }
-
-    void push(int idx, int l, int r) {
-        if (lazy[idx] == 0) return; // nothing to propagate
-        if (mode == "sum") seg[idx] += (r - l + 1) * lazy[idx];
-        else if (mode == "min" || mode == "max") seg[idx] += lazy[idx]; // add update
-        else if (mode == "xor") seg[idx] ^= lazy[idx];
-
-        if (l != r) {
-            lazy[2 * idx] += lazy[idx];
-            lazy[2 * idx + 1] += lazy[idx];
-        }
-
-        lazy[idx] = 0;
-    }
-
-    void build(const vector<int>& arr, int idx, int l, int r) {
-        if (l == r) {
-            seg[idx] = arr[l];
-            return;
-        }
-        int mid = (l + r) / 2;
-        build(arr, 2 * idx, l, mid);
-        build(arr, 2 * idx + 1, mid + 1, r);
-        seg[idx] = combine(seg[2 * idx], seg[2 * idx + 1]);
-    }
-
-    void rangeUpdate(int idx, int l, int r, int ql, int qr, long long val) {
-        push(idx, l, r);
-        if (qr < l || ql > r) return;
-        if (ql <= l && r <= qr) {
-            lazy[idx] += val;
-            push(idx, l, r);
-            return;
-        }
-        int mid = (l + r) / 2;
-        rangeUpdate(2 * idx, l, mid, ql, qr, val);
-        rangeUpdate(2 * idx + 1, mid + 1, r, ql, qr, val);
-        seg[idx] = combine(seg[2 * idx], seg[2 * idx + 1]);
-    }
-
-    long long query(int idx, int l, int r, int ql, int qr) {
-        push(idx, l, r);
-        if (qr < l || ql > r) return neutral();
-        if (ql <= l && r <= qr) return seg[idx];
-        int mid = (l + r) / 2;
-        return combine(
-            query(2 * idx, l, mid, ql, qr),
-            query(2 * idx + 1, mid + 1, r, ql, qr)
-        );
-    }
-
-public:
-    LazySegmentTree(const vector<int>& arr, string modeType = "sum") {
-        mode = modeType;
-        n = arr.size();
-        seg.assign(4 * n, 0);
-        lazy.assign(4 * n, 0);
-        build(arr, 1, 0, n - 1);
-    }
-
-    void update(int l, int r, long long val) {
-        rangeUpdate(1, 0, n - 1, l, r, val);
-    }
-
-    long long query(int l, int r) {
-        return query(1, 0, n - 1, l, r);
-    }
-};
-
 bool isMidValid(vector<int>& nums, int mid) {
 
         return true;
@@ -316,9 +225,31 @@ int32_t main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int t;
-    cin >> t;
-    while (t--) solve();
+    int n, q;
+    cin >> n >> q;
+
+    vector<int> nums(n); for (int i = 0; i < n; i++) cin >> nums[i];
+
+    SegmentTree st(nums, "min");
+
+    for (int i = 0; i < q; i++) {
+
+            int type;
+            cin >> type;
+
+            if (type == 1) {
+
+                int pos, val; cin >> pos >> val;
+                st.update(pos - 1, val);
+
+            } else if (type == 2) {
+
+                int l, r; cin >> l >> r; l--; r--;
+                cout << st.query(l, r) << endl;
+                
+            }
+        
+    }
 
     return 0;
 }
