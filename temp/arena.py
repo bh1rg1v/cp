@@ -158,7 +158,7 @@ class SegmentTree:
     def query(self, idx, left, right, ql, qr):
         
         if ql > right or qr < left:
-            return  0
+            return 0
         
         if ql <= left and right <= qr:
             return self.seg[idx]
